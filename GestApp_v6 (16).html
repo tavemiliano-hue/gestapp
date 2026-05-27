@@ -914,42 +914,57 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Segoe UI',sans-
     </div>
 
     <!-- COSTI FISSI -->
-    <div class="page" id="p-fissi">
-      <div class="sec">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
-          <div class="sec-title" style="margin:0">Costi fissi</div>
-          <button class="btn-sec" id="btn-add-fisso" onclick="nuovaVoceFisso()" style="display:none"><i class="ti ti-plus"></i>Aggiungi</button>
+    <div class="page" id="p-fissi" style="background:#F1F5F9;min-height:100vh">
+      <!-- Header scuro -->
+      <div style="background:linear-gradient(135deg,#6B1A1A 0%,#3B0000 100%);padding:30px 20px 24px">
+        <div style="font-size:13px;font-weight:700;color:#F87171;letter-spacing:.04em;text-transform:uppercase">Costi fissi</div>
+        <div style="font-size:22px;font-weight:900;color:#fff;margin-top:4px">Spese ricorrenti</div>
+      </div>
+      <!-- Griglia voci + tasto riepilogo -->
+      <div style="padding:16px 14px 0;display:grid;grid-template-columns:1fr 1fr;gap:12px" id="fissi-grid">
+        <!-- popolato da renderFissiGrid() -->
+        <!-- Tasto Riepilogo sempre presente -->
+        <button class="hm-btn" style="background:#0D47A1;border-color:#0D47A1;grid-column:1/-1" onclick="apriFissiReport()">
+          <i class="ti ti-table hm-ico"></i>
+          <span class="hm-lbl">Riepilogo</span>
+          <span class="hm-sub">Rapporto con corrispettivi</span>
+        </button>
+        <button class="hm-btn" style="background:#374151;border-color:#374151;grid-column:1/-1" onclick="nuovaVoceFisso()" id="btn-add-fisso" style="display:none">
+          <i class="ti ti-plus hm-ico"></i>
+          <span class="hm-lbl">Aggiungi voce</span>
+          <span class="hm-sub">Nuova spesa fissa</span>
+        </button>
+      </div>
+      <!-- hidden fields for compat -->
+      <div style="display:none">
+        <div id="fissi-voci-list"></div>
+        <div id="fissi-tab-voci"></div>
+        <div id="fissi-tab-pagamenti"></div>
+        <div id="fissi-pag-list"></div>
+        <div id="fissi-categorie"></div>
+      </div>
+      <div class="spacer"></div>
+    </div>
+
+    <!-- REPORT COSTI FISSI -->
+    <div class="page" id="p-fissi-report">
+      <div class="ph">
+        <button class="btn-back" onclick="goAB('fissi',document.getElementById('ab-fissi'));apriFissi()"><i class="ti ti-arrow-left"></i></button>
+        <div class="ph-title">Riepilogo costi fissi</div>
+      </div>
+      <div style="padding:0 16px">
+        <div class="ptabs" style="margin-bottom:10px">
+          <button class="ptab on" onclick="setFP(this,'giorno')">Giorno</button>
+          <button class="ptab" onclick="setFP(this,'settimana')">Settimana</button>
+          <button class="ptab" onclick="setFP(this,'mese')">Mese</button>
+          <button class="ptab" onclick="setFP(this,'anno')">Anno</button>
         </div>
-        <div class="ptabs">
-          <button class="ptab on" onclick="setFissiTab(this,'voci')">Voci di spesa</button>
-          <button class="ptab" onclick="setFissiTab(this,'pagamenti')">Pagamenti</button>
-          <button class="ptab" onclick="setFissiTab(this,'report')">Report</button>
+        <div style="background:var(--red-l);border:1.5px solid #FECACA;border-radius:var(--r);padding:18px;margin-bottom:12px;text-align:center">
+          <div style="font-size:11px;font-weight:700;color:var(--red);text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px">Totale — <span id="fissi-periodo-lbl">al giorno</span></div>
+          <div style="font-size:38px;font-weight:900;color:var(--red);letter-spacing:-2px" id="fissi-tot">€ 0</div>
+          <div style="font-size:13px;font-weight:600;color:var(--red);opacity:.7;margin-top:4px" id="fissi-sub">Annuo: € 0</div>
         </div>
-        <div id="fissi-tab-voci"><div id="fissi-voci-list"><div class="empty">Caricamento...</div></div></div>
-        <div id="fissi-tab-pagamenti" style="display:none">
-          <div style="display:flex;gap:6px;margin-bottom:10px">
-            <button class="ptab on" onclick="setFissiPagTab(this,'dafare')">Da pagare</button>
-            <button class="ptab" onclick="setFissiPagTab(this,'pagati')">Pagati</button>
-            <button class="ptab" onclick="setFissiPagTab(this,'tutti')">Tutti</button>
-          </div>
-          <div id="fissi-pag-list"><div class="empty">Nessun pagamento</div></div>
-        </div>
-        <div id="fissi-tab-report" style="display:none">
-          <div class="ptabs">
-            <button class="ptab on" onclick="setFP(this,'giorno')">Giorno</button>
-            <button class="ptab" onclick="setFP(this,'settimana')">Settimana</button>
-            <button class="ptab" onclick="setFP(this,'mese')">Mese</button>
-            <button class="ptab" onclick="setFP(this,'anno')">Anno</button>
-          </div>
-          <div style="background:var(--red-l);border:1.5px solid #FECACA;border-radius:var(--r);padding:18px;margin-bottom:12px;text-align:center">
-            <div style="font-size:11px;font-weight:700;color:var(--red);text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px">Totale — <span id="fissi-periodo-lbl">al giorno</span></div>
-            <div style="font-size:38px;font-weight:900;color:var(--red);letter-spacing:-2px" id="fissi-tot">€ 0</div>
-            <div style="font-size:13px;font-weight:600;color:var(--red);opacity:.7;margin-top:4px" id="fissi-sub">Annuo: € 0</div>
-          </div>
-          <div class="card"><div id="fissi-report-list" style="padding:4px 0"></div></div>
-          <div style="font-size:14px;font-weight:800;color:var(--muted);margin:14px 0 8px">Per categoria</div>
-          <div class="card"><div id="fissi-categorie" style="padding:14px 16px"></div></div>
-        </div>
+        <div id="fissi-report-list"></div>
       </div>
       <div class="spacer"></div>
     </div>
@@ -1711,12 +1726,48 @@ async function renderBolle(){
   }).join('')+'<tr class="be-tot"><td colspan="2">Totale periodo</td><td style="text-align:right">'+fmt(tot)+'</td><td style="text-align:right">'+fmt(totCorr)+'</td><td style="text-align:right">'+(totCorr>0?Math.round(tot/totCorr*100)+'%':'—')+'</td></tr>';
 }
 
-function apriFissi(){const btn=document.querySelector('#p-fissi .ptab');if(btn)setFissiTab(btn,'voci');}
-function setFissiTab(btn,tab){
-  document.querySelectorAll('#p-fissi > .sec > .ptabs .ptab').forEach(b=>b.classList.remove('on'));if(btn)btn.classList.add('on');fissiTab=tab;
-  ['voci','pagamenti','report'].forEach(t=>{const el=document.getElementById('fissi-tab-'+t);if(el)el.style.display=t===tab?'block':'none';});
-  if(tab==='voci')renderFissiVoci();else if(tab==='pagamenti')renderFissiPagamenti();else renderFissiReport();
+function apriFissi(){renderFissiGrid();}
+function apriFissiReport(){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));
+  document.getElementById('p-fissi-report').classList.add('on');
+  renderFissiReport();
 }
+async function renderFissiGrid(){
+  const isOwner=CUProfile?.role==='owner'||CUProfile?.role==='manager';
+  const btn=document.getElementById('btn-add-fisso');
+  if(btn)btn.style.display=isOwner?'flex':'none';
+  const{data}=await sb.from('fixed_costs').select('*').eq('is_active',true).order('name');
+  const grid=document.getElementById('fissi-grid');if(!grid)return;
+  // colori per categoria
+  const catColors={'Affitto':'#7C3AED','Utenze':'#0E7490','Personale':'#6B21A8','Commercialista':'#065F46','Assicurazione':'#9D174D','Manutenzione':'#C2410C','Varie':'#374151'};
+  // Rimuovi i tasti delle voci precedenti (tieni solo Riepilogo e Aggiungi)
+  const existing=grid.querySelectorAll('.fisso-voce-btn');
+  existing.forEach(b=>b.remove());
+  // Demo se vuoto
+  const demoVoci=(!data||!data.length)?[
+    {id:'fi1',name:'Affitto',annual_amount:36000,category:'Affitto'},
+    {id:'fi2',name:'Luce / Gas',annual_amount:12000,category:'Utenze'},
+    {id:'fi3',name:'Commercialista',annual_amount:4800,category:'Commercialista'},
+    {id:'fi4',name:'Assicurazione',annual_amount:3600,category:'Assicurazione'},
+    {id:'fi5',name:'Manutenzione',annual_amount:2400,category:'Manutenzione'},
+    {id:'fi6',name:'Gestionale',annual_amount:1200,category:'Varie'}
+  ]:(data||[]);
+  const fragment=document.createDocumentFragment();
+  demoVoci.forEach(f=>{
+    const col=catColors[f.category]||'#374151';
+    const btn=document.createElement('button');
+    btn.className='hm-btn fisso-voce-btn';
+    btn.style.cssText='background:'+col+';border-color:'+col;
+    btn.innerHTML='<i class="ti ti-receipt-2 hm-ico"></i><span class="hm-lbl">'+f.name+'</span><span class="hm-sub">€'+Math.round(f.annual_amount/12)+'/mese</span>';
+    btn.onclick=()=>apriDettaglioFisso(f.id);
+    fragment.appendChild(btn);
+  });
+  // Inserisci prima dei tasti fissi
+  const firstFixed=grid.querySelector('.hm-btn:not(.fisso-voce-btn)');
+  if(firstFixed)grid.insertBefore(fragment,firstFixed);
+  else grid.appendChild(fragment);
+}
+function setFissiTab(btn,tab){apriFissi();}
 function setFissiPagTab(btn,tab){btn.closest('div').querySelectorAll('.ptab').forEach(b=>b.classList.remove('on'));btn.classList.add('on');fissiPagTab=tab;renderFissiPagamenti();}
 function setFP(btn,p){btn.closest('.ptabs').querySelectorAll('.ptab').forEach(b=>b.classList.remove('on'));btn.classList.add('on');fP=p;renderFissiReport();}
 async function renderFissiVoci(){
